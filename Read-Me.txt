@@ -1,0 +1,20 @@
+Dual-homed
+
+Access layer all L2 2960 switch (L2 2960 switch NOT support channel-group)
+
+Distribution layer L3 3650 switch
+
+Core layer ISR 4331 router
+
+
+
+
+
+Access * Distribution::: L2 2960 * L2 2960  <--- ROAS
+Access * Distribution::: L3 3650 * L3 2960  
+Access * Distribution::: L2 2960 * L3 3650
+Access * Distribution::: L3 3650 * L3 3650  <--- Most preferred 
+
+
+
+ 

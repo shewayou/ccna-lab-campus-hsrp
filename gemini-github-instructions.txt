@@ -1,0 +1,105 @@
+1. Initial Setup & Milestone 1.0 (Current Working Baseline)
+Open your terminal in your project folder (ccna-lab-campus-hsrp/) and run these commands to create your repository and save your working single-core baseline:
+
+>>>
+# 1. Initialize the git repository
+git init
+
+# 2. Stage all your .pkt lab files and config .txt files
+git add .
+
+# 3. Commit the working single-core baseline
+git commit -m "feat: stable single-core ROAS baseline (ISP, R1, SW1-4, SW6)"
+
+# 4. Create an annotated Git tag for Milestone 1.0
+git tag -a v1.0-baseline-single-core -m "Milestone 1.0: Working single-core baseline"
+
+# 5. Link to your empty GitHub repo (replace <YOUR-REPO-URL> with your GitHub HTTPS/SSH link)
+git remote add origin <YOUR-REPO-URL>
+git branch -M main
+
+# 6. Push your commits AND your tags to GitHub
+git push -u origin main --tags
+<<<
+
+Important Note: Standard git push does not upload tags by default! Always add --tags so your milestones show up under the Releases / Tags tab on GitHub.
+
+
+
+2. Milestone 1.1 (Roll Out SW5)
+After you add lab-v1.1-sw5-added.pkt to your folder, configure SW5, and update your .txt configs:
+
+>>>
+# 1. Check which files were added or modified
+git status
+
+# 2. Stage all updated lab and config files
+git add .
+
+# 3. Commit your SW5 distribution changes
+git commit -m "feat: add SW5 redundant L2 distribution switch and trunks"
+
+# 4. Tag Milestone 1.1
+git tag -a v1.1-dist-sw5-redundant -m "Milestone 1.1: Added SW5 distribution redundancy"
+
+# 5. Push the new commit and tag to GitHub
+git push origin main --tags
+<<<
+
+
+
+3. Milestone 1.2 (Add R2 & Connect to ISP/SW1)
+After you add lab-v1.2-r2-added.pkt, paste your corrected R2 router configuration, and test basic reachability:
+
+>>>
+# 1. Stage your changes
+git add .
+
+# 2. Commit the dual-core R2 topology
+git commit -m "feat: add R2 redundant core router and subinterfaces"
+
+# 3. Tag Milestone 1.2
+git tag -a v1.2-dual-core-r2-roas -m "Milestone 1.2: Dual-core R2 ROAS topology"
+
+# 4. Push to GitHub
+git push origin main --tags
+<<<
+
+
+
+4. Milestone 2.0 (Final HSRP Deployment — The Real Exercise!)
+Once you configure your HSRP virtual IP gateways on R1 and R2, update your DHCP default router options, and confirm active/standby failover works:
+
+>>>
+# 1. Stage the completed HSRP lab files
+git add .
+
+# 2. Commit the final HSRP deployment
+git commit -m "feat: implement HSRP v2 IPv4/IPv6 active-standby gateway"
+
+# 3. Tag your final CCNA milestone!
+git tag -a v2.0-hsrp-active-standby -m "Milestone 2.0: Active-Standby HSRP v2 complete"
+
+# 4. Push to GitHub
+git push origin main --tags
+<<<
+
+
+
+5. Pro-Tip: How to "Time Travel" Back to an Older Milestone
+If you ever mess up a configuration or want to re-test how the lab behaved before you added R2 or HSRP, you can instantly check out an older tag:
+
+>>>
+# Inspect your lab exactly as it was at Milestone 1.0
+git checkout v1.0-baseline-single-core
+
+# When you are done exploring, switch right back to your latest work on main
+git checkout main
+<<<
+
+You are all set to start safely rolling out SW5 whenever you are ready!
+
+
+
+
+
