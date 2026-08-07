@@ -1,0 +1,96 @@
+!# configure terminal
+! R2-hsrp.txt
+! Part 1
+!
+
+
+
+! R2 interface gig0/0/1 --- SW1
+! VLAN 10 (Eng) -- R2 is STANDBY (Default Priority 100)
+interface gig0/0/1.10
+ standby version 2
+ standby 10 ip 192.168.10.254
+! standby 10 ipv6 2001:db8:0:10::254
+ ipv6 address autoconfig
+ standby 10 ipv6 autoconfig
+ standby 10 preempt
+ exit
+
+! VLAN 20 (Sales) -- R2 is ACTIVE (Priority 110)
+interface gig0/0/1.20
+ standby version 2
+ standby 20 ip 192.168.20.254
+! standby 20 ipv6 2001:db8:0:20::254
+ ipv6 address autoconfig
+ standby 20 ipv6 autoconfig
+ standby 20 priority 220
+ standby 20 preempt
+ exit
+
+! VLAN 30 (Admin) -- R2 is STANDBY (Default Priority 100)
+interface gig0/0/1.30
+ standby version 2
+ standby 30 ip 192.168.30.254
+! standby 30 ipv6 2001:db8:0:30::254
+ ipv6 address autoconfig
+ standby 30 ipv6 autoconfig
+ standby 30 preempt
+ exit
+
+! VLAN 99 (Management) -- R2 is ACTIVE (Priority 110)
+interface gig0/0/1.99
+ standby version 2
+ standby 99 ip 192.168.99.254
+! standby 99 ipv6 2001:db8:0:99::254
+ ipv6 address autoconfig
+ standby 99 ipv6 autoconfig
+ standby 99 priority 299
+ standby 99 preempt
+ exit
+ 
+exit
+
+
+ 
+ 
+! # configure terminal
+! R1-hsrp.txt
+! Part 2
+
+! R2 can give out .101 --- .200 
+ip dhcp excluded-address 192.168.10.1 192.168.10.100
+ip dhcp excluded-address 192.168.10.201 192.168.10.254
+
+ip dhcp excluded-address 192.168.20.1 192.168.20.100
+ip dhcp excluded-address 192.168.20.201 192.168.20.254
+
+ip dhcp excluded-address 192.168.30.1 192.168.30.100
+ip dhcp excluded-address 192.168.30.201 192.168.30.254
+
+
+
+
+ip dhcp pool Eng_VLAN10
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.254
+ dns-server 8.8.8.8
+ exit
+
+ip dhcp pool Sales_VLAN20
+ network 192.168.20.0 255.255.255.0
+ default-router 192.168.20.254
+ dns-server 8.8.8.8
+ exit
+
+ip dhcp pool Admin_VLAN30
+ network 192.168.30.0 255.255.255.0
+ default-router 192.168.30.254
+ dns-server 8.8.8.8
+ exit
+
+ 
+exit
+
+
+
+  

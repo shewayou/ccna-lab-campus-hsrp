@@ -102,4 +102,34 @@ You are all set to start safely rolling out SW5 whenever you are ready!
 
 
 
+20260806:::
+Lock in Milestone 1.3 (v1.3-hsrp-gateway-redundancy)
+
+Open your terminal in the repository root and run this exact sequence to stage your updated configurations, commit the checkpoint, tag the milestone, and push everything to GitHub:
+
+>>>
+# 1. Stage all updated router and switch configuration files
+git add .
+
+# 2. Commit the milestone with a descriptive engineering message
+git commit -m "feat: configure HSRP load balancing and split-scope DHCP across R1 and R2"
+
+# 3. Create an annotated milestone tag
+git tag -a v1.3-hsrp-gateway-redundancy -m "Milestone 1.3: Active/Standby HSRP VIPs (.254) and Split-Scope DHCP"
+
+# 4. Push your commit and new tag to GitHub
+git push origin main --tags 
+<<<
+
+What You Have Accomplished So Far
+
+Your repository now contains three verified, tagged restore points representing a robust dual-core campus network:
+
+v1.1-dist-sw5-redundant: Redundant Layer 2 distribution layer (SW1 & SW5) with STP loop prevention.
+
+v1.2-dual-core-r2-roas: Redundant Layer 3 core router (R2) with ROAS dot1Q subinterfaces.
+
+v1.3-hsrp-gateway-redundancy: First Hop Redundancy Protocol (HSRP version 2) with Active/Standby load balancing and DHCP Split-Scope (.21–.100 on R1, .101–.200 on R2).
+
+
 

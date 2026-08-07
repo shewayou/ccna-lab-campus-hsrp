@@ -1,0 +1,117 @@
+Here is our complete HSRP Virtual IP (VIP) Architecture Table and configuration blueprint!
+
+To make your campus network perform like a real-world enterprise environment, we will design this deployment around FHRP Load Balancing—meaning R1 and R2 will share the routing workload rather than letting one router sit idle.
+
+
+1. The HSRP Virtual IP (VIP) Planning Table
+We will assign HSRP group numbers that match your VLAN IDs (Group 10 for VLAN 10, Group 20 for VLAN 20, etc.) and use .254 as the shared Virtual IP address across all subnets:  
+
+VLAN & DepartmentHSRP GroupIPv4 Virtual IP (VIP)IPv6 Virtual IP (VIP)Active Gateway (Priority 110 + Preempt)Standby Gateway (Priority 100 + Preempt)
+VLAN 10 (Eng)  10192.168.10.2542001:db8:0:10::254R1 (gig0/0/1.10)  R2 (gig0/0/1.10)  
+VLAN 20 (Sales)  20192.168.20.2542001:db8:0:20::254R2 (gig0/0/1.20)  R1 (gig0/0/1.20)  
+VLAN 30 (Admin)  30192.168.30.2542001:db8:0:30::254R1 (gig0/0/1.30)  R2 (gig0/0/1.30)  
+VLAN 99 (Management)  99192.168.99.2542001:db8:0:99::254R2 (gig0/0/1.99)  R1 (gig0/0/1.99)  
+
+
+
+2. Why This Load-Balancing Design Works
+
+2.1: Active/Standby Division: R1 acts as the primary gateway for Eng (VLAN 10) and Admin (VLAN 30), while R2 acts as the primary gateway for Sales (VLAN 20) and Management (VLAN 99).  
+
+2.2: Spanning Tree Alignment: This pairs with your Layer 2 switching layout:
+ 2.1:: SW1 is the STP Primary Root Bridge for odd VLANs (10, 30), feeding directly into R1.
+ 2.2:: SW5 is the STP Primary Root Bridge for even VLANs (20, 99), feeding directly into R2.
+
+2.3: The Role of preempt: By enabling standby <group> preempt on both routers, if an Active router reboots and comes back online, it will automatically reclaim its Active role once its interfaces stabilize.
+
+3. IOS Configuration Blueprint (R1 & R2)
+Here is how the commands will look on your subinterfaces. Notice how we set priority 110 on the router we want to be Active, while leaving the Standby router at the default priority 100:
+
+3.A: R1 Configuration Block (R1.txt)
+>>>
+R1# configure terminal
+
+! VLAN 10 (Eng) -- R1 is ACTIVE (Priority 110)
+interface gig0/0/1.10
+ standby version 2
+ standby 10 ip 192.168.10.254
+ standby 10 ipv6 2001:db8:0:10::254
+ standby 10 priority 110
+ standby 10 preempt
+ exit
+
+! VLAN 20 (Sales) -- R1 is STANDBY (Default Priority 100)
+interface gig0/0/1.20
+ standby version 2
+ standby 20 ip 192.168.20.254
+ standby 20 ipv6 2001:db8:0:20::254
+ standby 20 preempt
+ exit
+
+! VLAN 30 (Admin) -- R1 is ACTIVE (Priority 110)
+interface gig0/0/1.30
+ standby version 2
+ standby 30 ip 192.168.30.254
+ standby 30 ipv6 2001:db8:0:30::254
+ standby 30 priority 110
+ standby 30 preempt
+ exit
+
+! VLAN 99 (Management) -- R1 is STANDBY (Default Priority 100)
+interface gig0/0/1.99
+ standby version 2
+ standby 99 ip 192.168.99.254
+ standby 99 ipv6 2001:db8:0:99::254
+ standby 99 preempt
+ exit
+<<<
+
+
+3.B: R2 Configuration Block (R2.txt)
+>>>
+R2# configure terminal
+
+! VLAN 10 (Eng) -- R2 is STANDBY (Default Priority 100)
+interface gig0/0/1.10
+ standby version 2
+ standby 10 ip 192.168.10.254
+ standby 10 ipv6 2001:db8:0:10::254
+ standby 10 preempt
+ exit
+
+! VLAN 20 (Sales) -- R2 is ACTIVE (Priority 110)
+interface gig0/0/1.20
+ standby version 2
+ standby 20 ip 192.168.20.254
+ standby 20 ipv6 2001:db8:0:20::254
+ standby 20 priority 110
+ standby 20 preempt
+ exit
+
+! VLAN 30 (Admin) -- R2 is STANDBY (Default Priority 100)
+interface gig0/0/1.30
+ standby version 2
+ standby 30 ip 192.168.30.254
+ standby 30 ipv6 2001:db8:0:30::254
+ standby 30 preempt
+ exit
+
+! VLAN 99 (Management) -- R2 is ACTIVE (Priority 110)
+interface gig0/0/1.99
+ standby version 2
+ standby 99 ip 192.168.99.254
+ standby 99 ipv6 2001:db8:0:99::254
+ standby 99 priority 110
+ standby 99 preempt
+ exit
+<<<
+
+
+4. What Happens After We Apply This?
+Once HSRP is running on both routers, we will make two key updates to complete the transition:
+4.1: Update DHCP Pools (on R1 and R2): We will change the default-router command inside your DHCP pools from .1 or .2 to .254 so new DHCP clients automatically use the Virtual IP.  
+4.2: Update Static PC/Switch Gateways: Any device with a statically configured default gateway (like your switches on Management VLAN 99) will be updated to point to 192.168.99.254 and 2001:db8:0:99::254.  
+
+Whenever you are ready to test this in Packet Tracer, you can paste the R1 block first, verify that R1 becomes Active for all groups, and then paste R2 to watch the load balancing take effect!
+
+

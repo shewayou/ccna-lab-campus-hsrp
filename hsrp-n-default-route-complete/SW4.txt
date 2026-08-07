@@ -1,11 +1,11 @@
 config t
 
 !
-! Access Layer: SW3 Switch: L2 2960 Switch (NOT support channel-group)
+! Access Layer: SW4 Switch: L2 2960 Switch (NOT support channel-group)
 !
 
 no ip domain-lookup
-hostname SW3
+hostname SW4
 
 
 ! Console Settings
@@ -54,16 +54,16 @@ exit
 
 
 
-ip default-gateway 192.168.99.1
+ip default-gateway 192.168.99.254
 ipv6  route   ::/0   2001:db8:0:99::1
 
 
 
 interface vlan 99
- description  SW3 Management SVI
- ip    address 192.168.99.33        255.255.255.0
- ipv6  address 2001:db8:0:99::33/64
- ipv6  address fe80::33            link-local
+ description  SW4 Management SVI
+ ip    address 192.168.99.34        255.255.255.0
+ ipv6  address 2001:db8:0:99::34/64
+ ipv6  address fe80::34            link-local
  no shutdown
  exit
 
@@ -71,26 +71,26 @@ interface vlan 99
 
 
 interface fa0/1
- description SW3 -- SW1 (Distribution Layer)
+ description SW4 -- SW1 (Distribution Layer)
  switchport mode trunk
  switchport trunk native vlan 900
- switchport trunk allowed vlan 10,30,99
+ switchport trunk allowed vlan 20,30,99
  no shutdown
  exit
  
 interface fa0/2
- description SW3 -- SW5 (Distribution Layer)
+ description SW4 -- SW5 (Distribution Layer)
  switchport mode trunk
  switchport trunk native vlan 900
- switchport trunk allowed vlan 10,30,99
+ switchport trunk allowed vlan 20,30,99
  no shutdown
  exit
 
  
 interface fa0/21
- description SW3 -- Eng2
+ description SW4 -- Sales3
  switchport mode access
- switchport access vlan 10
+ switchport access vlan 20
  spanning-tree portfast
  spanning-tree bpduguard enable
  switchport port-security
@@ -101,7 +101,7 @@ interface fa0/21
  exit
  
 interface fa0/22
- description SW3 -- Admin1
+ description SW4 -- Admin3
  switchport mode access
  switchport access vlan 30
  spanning-tree portfast

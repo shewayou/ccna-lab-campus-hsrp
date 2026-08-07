@@ -78,7 +78,7 @@ interface fa0/1
  no shutdown
  exit
  
-interface fa0/11
+interface fa0/2
  description SW6 -- SW5 (Distribution Layer)
  switchport mode trunk
  switchport trunk native vlan 900

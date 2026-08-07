@@ -53,7 +53,7 @@ exit
 
 
 
-ip default-gateway 192.168.99.1
+ip default-gateway 192.168.99.254
 ipv6  route   ::/0   2001:db8:0:99::1
 
 
