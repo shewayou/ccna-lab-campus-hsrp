@@ -133,3 +133,97 @@ v1.3-hsrp-gateway-redundancy: First Hop Redundancy Protocol (HSRP version 2) wit
 
 
 
+20260808:::
+Lock in Milestone 1.4 (v1.4-ospf-area0-routing)
+
+With your OSPF Area 0 adjacencies FULL, loopbacks dynamically exchanging, and Northbound failover ready, Milestone 1.4 is officially complete!
+
+Run this Git sequence from your repository root to stage, commit, and tag your new OSPF dynamic routing baseline:
+
+>>>
+# 1. Stage all updated router and switch configuration files
+git add .
+
+# 2. Commit the milestone with a descriptive engineering message
+git commit -m "feat: configure OSPF Area 0 dynamic routing and default route failover across R1 and R2"
+
+# 3. Create an annotated milestone tag
+git tag -a v1.4-ospf-area0-routing -m "Milestone 1.4: OSPF Area 0 across VLAN 100 with default-information originate"
+
+# 4. Push your commit and new tag to GitHub
+git push origin main --tags
+<<<
+
+
+To verify, on PCs to ping each other?
+
+YES—pinging between your PCs is the ultimate end-to-end test!
+When a PC in one department can successfully ping a PC in another department (or across the campus on a different switch), it proves that your Layer 2 trunks, HSRP Virtual Gateways (.254), ROAS subinterfaces, and OSPF routing tables are all working together seamlessly.
+Here is your 4-Step PC Verification Matrix to test every layer of your campus network:
+1. Inter-VLAN Routing Test (Different Departments)
+This tests whether your PCs can send traffic to their HSRP default gateway (.254) and have R1 or R2 route the packet between VLANs.
+From: An Engineering PC in VLAN 10 (192.168.10.x)  
+To: A Sales PC in VLAN 20 (192.168.20.x) or Admin PC in VLAN 30 (192.168.30.x)  
+Command (in PC Desktop $\rightarrow$ Command Prompt):
+>>>
+ping 192.168.20.x
+<<<
+
+(Replace .x with the actual DHCP IP address of the destination PC!)
+
+What it proves: Your ROAS subinterfaces (gig0/0/1.10, .20, .30) and HSRP virtual IPs are actively routing packets between subnets.  
+
+2. Cross-Campus Test (Same Department, Different Switch)
+This tests whether your dot1Q trunks across SW1 and SW5 are properly forwarding tagged VLAN frames across the campus fabric without leaking or blocking them.  
+From: Eng1 on SW2 (fa0/21, VLAN 10)  
+To: Eng3 on SW6 (fa0/21, VLAN 10)  
+Command:
+>>>
+ping 192.168.10.x
+<<<
+
+What it proves: Your Spanning Tree topology and inter-switch trunks (SW2 $\leftrightarrow$ SW1/SW5 $\leftrightarrow$ SW6) are forwarding VLAN 10 end-to-end.  
+
+3. North-South WAN Test (Internet Reachability)
+This tests whether your PCs can escape the campus network and reach the simulated Internet through your core routers and ISP.  
+From: Any PC (Eng, Sales, or Admin)
+To: The ISP Gateway (203.0.113.1 or 203.0.114.1) or simulated Internet DNS (8.8.8.8)  
+Command:
+>>>
+ping 203.0.113.1
+<<<
+
+What it proves: Your OSPF default route injection (default-information originate), NAT/WAN routing, and ISP ECMP return routes are 100% functional.  
+
+4. The Ultimate Redundancy Test (Live Failover)
+Now for the test that separates a basic lab from an enterprise network: testing your HSRP and OSPF failover live while traffic is running.
+
+4.1 Open Eng1 ---> Desktop ---> Command Prompt.
+4.2 Start a continuous ping to a PC in another VLAN or to the ISP:
+>>>
+ping -t 203.0.113.1
+<<<
+
+4.3 Leave that window running, go into R1, and administratively shut down its WAN link or LAN trunk:
+
+>>>
+R1# configure terminal
+R1(config)# interface gig0/0/0
+R1(config-if)# shutdown
+<<<
+
+4.4 Look back at your PC prompt:
+
+You will typically see 1 or 2 Request timed out messages while OSPF and HSRP detect the link drop.
+
+Then, the pings will automatically turn solid green again as R2 takes over the traffic!
+
+
+
+A Quick Reminder on the "First Ping Drop" Rule
+Whenever you ping a new IP address for the very first time in Packet Tracer, remember to press Alt + D a few times first!
+
+Even then, the very first ping will often time out (4/5 or 80% success) while the PC sends an ARP request to learn the destination MAC address. Just run the ping command a second time, and you should see 100% (4/4) success every time!
+
+
+

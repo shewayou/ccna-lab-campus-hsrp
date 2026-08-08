@@ -54,9 +54,8 @@ exit
 
 
 
-ip default-gateway 192.168.99.254
-ipv6  route   ::/0   2001:db8:0:99::1
-ipv6  route   ::/0   2001:db8:0:99::2
+!zip default-gateway 192.168.99.254
+!zipv6  route   ::/0   2001:db8:0:99::1
 
 
 
@@ -113,8 +112,25 @@ interface fa0/22
  switchport port-security violation shutdown
  no shutdown
  exit
- 
 
+
+
+
+
+!zno ipv6 route ::/0 2001:db8:0:99::1
+!zno ip default-gateway 192.168.99.1
+
+
+! ========== OSPF CONFIGURATION ==========
+
+
+ip default-gateway 192.168.99.254
+
+ipv6 route ::/0   2001:db8:0:99::1
+ipv6 route ::/0   2001:db8:0:99::2
+ 
+ 
+ 
 
 exit
 

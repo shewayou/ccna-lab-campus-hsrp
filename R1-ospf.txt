@@ -1,0 +1,81 @@
+! # configure terminal
+! R1-ospf.txt
+! Part 1
+
+
+
+router ospf 1
+ router-id  1.1.1.1
+ 
+ ! Best practice: Make all interfaces passive by default, then enable Hellos only VLAN 100
+ ! VLAN 100 is L2-port-between-R1-R2
+
+ ! passive-interface default
+ passive-interface loopback0
+ ! no passive-interface vlan 100
+ passive-interface gig0/0/1.10
+ passive-interface gig0/0/1.20
+ passive-interface gig0/0/1.30
+ passive-interface gig0/0/1.99
+ 
+ ! Advertise Campus Networks into Area 0
+ network 192.168.100.0  0.0.0.255    area 0
+ network 10.1.0.0       0.0.0.3      area 0
+ network 192.168.10.0   0.0.0.255    area 0
+ network 192.168.20.0   0.0.0.255    area 0
+ network 192.168.30.0   0.0.0.255    area 0
+ network 192.168.99.0   0.0.0.255    area 0
+ 
+ ! Share static Internet default route with R2
+ default-information originate
+ 
+ exit
+ 
+ 
+! ================= IPv6 OSPF AREA 0 =================  
+ipv6 router ospf 1
+ router-id 1.1.1.1
+ ! passive-interface default
+ passive-interface loopback0
+ passive-interface gig0/0/1.10
+ passive-interface gig0/0/1.20
+ passive-interface gig0/0/1.30
+ passive-interface gig0/0/1.99
+
+ default-information originate
+ 
+ exit
+ 
+
+ 
+! Enable IPv6 OSPF directly on interfaces
+interface loopback0
+ ipv6 ospf 1  area 0
+ exit
+
+interface vlan 100
+ ipv6 ospf 1  area 0
+ exit
+
+interface gig0/0/1.10
+ ipv6 ospf 1  area 0
+ exit
+
+interface gig0/0/1.20
+ ipv6 ospf 1  area 0
+ exit
+
+interface gig0/0/1.30
+ ipv6 ospf 1  area 0
+ exit
+
+interface gig0/0/1.99
+ ipv6 ospf 1  area 0
+ exit
+
+ 
+ 
+exit
+
+
+ 
